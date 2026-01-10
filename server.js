@@ -87,6 +87,7 @@ const path = require('path');
 const os = require('os');
 
 // 3. Convert Endpoint
+// 3. Convert Endpoint
 app.post('/api/convert', async (req, res) => {
     const { videoUrl, start, duration } = req.body;
 
@@ -99,43 +100,69 @@ app.post('/api/convert', async (req, res) => {
 
     console.log(`Starting conversion: ${startTime}s for ${dur}s`);
 
-    // Create temp file path
-    const tempFile = path.join(os.tmpdir(), `gif_${Date.now()}_${Math.random().toString(36).substring(7)}.gif`);
+    // Paths
+    const id = Date.now() + '_' + Math.random().toString(36).substring(7);
+    const inputTemp = path.join(os.tmpdir(), `input_${id}.mp4`);
+    const outputTemp = path.join(os.tmpdir(), `output_${id}.gif`);
 
-    ffmpeg(videoUrl)
-        .setStartTime(startTime)
-        .setDuration(dur)
-        .fps(15) // Higher FPS than client-side
-        .outputOptions([
-            '-vf', 'scale=480:-1' // Simplified filter to prevent SIGSEGV/Memory crash
-        ])
-        .format('gif')
-        .save(tempFile) // Save to disk first
-        .on('start', (cmd) => {
-            console.log('FFMPEG Started:', cmd);
-        })
-        .on('error', (err) => {
-            console.error('FFMPEG Error:', err);
-            // Clean up if partially written
-            if (fs.existsSync(tempFile)) {
-                fs.unlink(tempFile, () => { });
-            }
-            if (!res.headersSent) {
-                res.status(500).json({ error: 'Conversion failed', details: err.message });
-            }
-        })
-        .on('end', () => {
-            console.log('FFMPEG Finished. Sending file.');
-            res.download(tempFile, 'twitter-convert.gif', (err) => {
-                if (err) {
-                    console.error('Download Error:', err);
-                }
-                // Cleanup after download (success or error)
-                if (fs.existsSync(tempFile)) {
-                    fs.unlink(tempFile, () => { });
-                }
-            });
+    try {
+        // 1. Download Video First
+        console.log('Downloading video...', videoUrl);
+        const writer = fs.createWriteStream(inputTemp);
+        const response = await axios({
+            url: videoUrl,
+            method: 'GET',
+            responseType: 'stream'
         });
+
+        response.data.pipe(writer);
+
+        await new Promise((resolve, reject) => {
+            writer.on('finish', resolve);
+            writer.on('error', reject);
+        });
+        console.log('Video downloaded to:', inputTemp);
+
+        // 2. Convert Local File
+        await new Promise((resolve, reject) => {
+            ffmpeg(inputTemp)
+                .setStartTime(startTime)
+                .setDuration(dur)
+                .fps(15)
+                .outputOptions(['-vf', 'scale=480:-1'])
+                .format('gif')
+                .save(outputTemp)
+                .on('start', (cmd) => console.log('FFMPEG Started:', cmd))
+                .on('error', (err) => {
+                    console.error('FFMPEG Error:', err);
+                    reject(err);
+                })
+                .on('end', () => {
+                    console.log('FFMPEG Finished');
+                    resolve();
+                });
+        });
+
+        // 3. Send
+        res.download(outputTemp, 'twitter-convert.gif', (err) => {
+            if (err) console.error('Download Error:', err);
+            // Cleanup
+            cleanup([inputTemp, outputTemp]);
+        });
+
+    } catch (error) {
+        console.error('Conversion Failed:', error);
+        cleanup([inputTemp, outputTemp]);
+        if (!res.headersSent) {
+            res.status(500).json({ error: 'Server Error', details: error.message });
+        }
+    }
+
+    function cleanup(files) {
+        files.forEach(f => {
+            if (fs.existsSync(f)) fs.unlink(f, () => { });
+        });
+    }
 });
 
 // 4. ZIP Download Endpoint

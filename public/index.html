@@ -58,11 +58,11 @@
                     </div>
                 </div>
 
-                <div class="preview-actions">
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
                     <!-- Added Preview Download Button just in case -->
                     <a id="previewDownloadBtn" class="btn secondary" href="#" target="_blank"
-                        style="text-decoration:none;">Download Video</a>
-                    <button id="convertBtn" class="btn action-btn">
+                        style="flex:1; text-decoration:none;">Download Video</a>
+                    <button id="convertBtn" class="btn action-btn" style="margin-top:0; flex:1;">
                         Generate GIF
                     </button>
                 </div>
@@ -84,11 +84,11 @@
                 <h3>Result</h3>
                 <img id="gifResult" src="" alt="Generated GIF">
 
-                <div class="result-actions">
-                    <a id="downloadMp4Btn" class="btn secondary" href="#" target="_blank">
+                <div class="result-actions" style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a id="downloadMp4Btn" class="btn secondary" href="#" target="_blank" style="flex: 1;">
                         Download Video
                     </a>
-                    <a id="downloadBtn" class="btn secondary" href="#" download="converted.gif">
+                    <a id="downloadBtn" class="btn secondary" href="#" download="converted.gif" style="flex: 1;">
                         Download GIF
                     </a>
                 </div>
@@ -110,7 +110,7 @@
     </main>
 
     <footer>
-        <div class="footer-text">
+        <div class="footer-content">
             <p><strong>Twitter2Gif</strong> is a minimalist, privacy-focused tool designed to preserve ephemeral digital
                 media.</p>
             <p>Archive videos, capture GIFs, and extract high-quality images from Tweets without watermarks or tracking.

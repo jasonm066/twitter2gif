@@ -1,10 +1,7 @@
 :root {
     --bg: #000000;
-    --fg: #e0e0e0;
-    --dim: #666666;
-    --accent: #ffffff;
-
-    --font-stack: 'Courier New', Courier, monospace;
+    --fg: #ffffff;
+    --dim: #555555;
 }
 
 * {
@@ -16,86 +13,78 @@
 body {
     background: var(--bg);
     color: var(--fg);
-    font-family: var(--font-stack);
-    -webkit-font-smoothing: none;
-    /* Crisper text for terminal feel */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    letter-spacing: -0.01em;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    line-height: 1.4;
+    justify-content: center;
+    /* Center vertically for drama */
 }
 
 .app-container {
     width: 100%;
-    max-width: 560px;
-    padding: 4rem 1rem;
+    max-width: 480px;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: 4rem;
+    /* Massive whitespace */
 }
 
 /* Typography */
 h1 {
-    font-size: 1.5rem;
-    font-weight: normal;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    border-bottom: 1px double var(--dim);
-    padding-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: lowercase;
+    color: var(--dim);
     margin-bottom: 0.5rem;
-    text-align: center;
 }
 
 .tagline {
-    text-align: center;
-    color: var(--dim);
-    font-size: 0.8rem;
-    text-transform: lowercase;
+    display: none;
 }
 
-.tagline::before {
-    content: "> ";
-}
+/* Too much info */
 
 h2 {
-    font-size: 0.9rem;
-    font-weight: normal;
-    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 400;
     color: var(--dim);
     margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
+    display: none;
+    /* Hide labels, context implies function */
 }
 
 /* Input Area */
 .huge-input {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px dashed var(--dim);
+    gap: 1.5rem;
 }
 
 .huge-input input {
     background: transparent;
     border: none;
-    border-bottom: 1px solid var(--dim);
+    border-bottom: 1px solid #333;
     color: var(--fg);
-    font-family: var(--font-stack);
-    font-size: 1rem;
+    font-family: inherit;
+    font-size: 1.5rem;
+    /* The hero */
     padding: 0.5rem 0;
     outline: none;
     width: 100%;
+    transition: 0.3s;
 }
 
 .huge-input input:focus {
-    border-color: var(--accent);
+    border-color: #fff;
 }
 
 .huge-input input::placeholder {
-    color: var(--dim);
-    font-style: italic;
+    color: #333;
 }
 
 #fetchBtn {
@@ -103,44 +92,22 @@ h2 {
     background: transparent;
     border: none;
     color: var(--fg);
-    font-family: var(--font-stack);
     font-size: 0.9rem;
     cursor: pointer;
     padding: 0;
-    text-transform: uppercase;
 }
 
 #fetchBtn:hover {
-    color: var(--accent);
     text-decoration: underline;
 }
 
-#fetchBtn::before {
-    content: "[ ";
-    color: var(--dim);
-}
-
-#fetchBtn::after {
-    content: " ]";
-    color: var(--dim);
-}
-
-.btn-text {
-    display: inline;
-}
-
-/* Fix inner span */
-
-/* --- Cards / Sections (Invisible) --- */
-.card {
-    animation: blinkIn 0.2s steps(2, start);
+.btn-text::after {
+    content: " ->";
 }
 
 /* --- Video Preview --- */
 .video-preview {
-    margin-top: 2rem;
-    border: 1px solid var(--dim);
-    padding: 2px;
+    margin-top: 1rem;
 }
 
 .preview-header {
@@ -150,90 +117,84 @@ h2 {
 video {
     width: 100%;
     display: block;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
 }
 
 .controls {
-    padding: 1.5rem 0;
+    padding-top: 2rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-/* Sliders - Terminal Style */
-.range-group label {
+/* Sliders - Invisible */
+.range-group {
     display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
+    align-items: center;
+    gap: 1rem;
+}
+
+.range-group label {
+    font-size: 0.7rem;
     color: var(--dim);
-    margin-bottom: 0.3rem;
+    width: 60px;
 }
 
 input[type=range] {
-    width: 100%;
-    height: 2px;
-    background: var(--dim);
+    flex: 1;
+    height: 1px;
+    background: #333;
     appearance: none;
 }
 
 input[type=range]::-webkit-slider-thumb {
     appearance: none;
     width: 8px;
-    height: 16px;
-    background: var(--fg);
-    cursor: col-resize;
-    border: none;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
 }
 
 /* --- Buttons --- */
 .btn {
-    display: inline-block;
+    display: block;
+    width: 100%;
     background: transparent;
-    border: none;
+    border: 1px solid #333;
     color: var(--fg);
-    font-family: var(--font-stack);
-    font-size: 0.9rem;
-    text-transform: uppercase;
+    font-size: 0.8rem;
+    text-transform: lowercase;
     text-decoration: none;
     cursor: pointer;
     text-align: center;
-    padding: 0.5rem 0;
+    padding: 1rem;
+    transition: 0.2s;
+    border-radius: 0;
 }
 
 .btn:hover {
-    color: var(--accent);
+    border-color: #fff;
 }
 
-.btn::before {
-    content: "[ ";
-    color: var(--dim);
+.action-btn {
+    /* Generate */
+    border-color: #fff;
+    margin-top: 2rem;
 }
 
-.btn::after {
-    content: " ]";
-    color: var(--dim);
-}
-
-/* Remove specific stylings */
-.btn.action-btn,
-.btn.secondary,
-.btn.primary,
-.btn-restart {
-    width: 100%;
-    margin: 0;
-    border: none;
-    background: transparent;
-}
-
-.btn-restart {
-    margin-top: 1rem;
+.action-btn:hover {
+    background: #fff;
+    color: #000;
 }
 
 /* Layouts */
 .preview-actions,
 .result-actions {
     display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 .preview-actions .btn,
@@ -241,86 +202,83 @@ input[type=range]::-webkit-slider-thumb {
     flex: 1;
 }
 
+.btn-restart {
+    margin-top: 0.5rem;
+    border: none;
+    color: var(--dim);
+}
+
+.btn-restart:hover {
+    color: #fff;
+    border: none;
+}
+
 /* --- Results --- */
 .result-area {
-    margin-top: 3rem;
+    margin-top: 4rem;
     text-align: center;
 }
 
 #gifResult {
     max-width: 100%;
-    border: 1px solid var(--dim);
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 /* --- History --- */
+.history-section {
+    border-top: 1px solid #111;
+    padding-top: 4rem;
+}
+
 .history-header {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    border-bottom: 1px solid var(--dim);
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
 }
 
-.history-header h2 {
-    margin: 0;
-    border: none;
-}
-
-/* Fix generic clear button */
 #clearHistoryBtn {
     background: transparent;
     border: none;
     color: var(--dim);
-    font-family: var(--font-stack);
-    font-size: 0.8rem;
-    text-transform: uppercase;
+    font-size: 0.7rem;
     cursor: pointer;
-    padding: 0;
 }
 
 #clearHistoryBtn:hover {
-    color: var(--accent);
-    text-decoration: line-through;
+    color: #fff;
 }
 
 .history-grid {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
 }
 
 .history-item {
     display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 0.5rem 0;
+    align-items: center;
+    gap: 1.5rem;
     cursor: pointer;
+    opacity: 0.5;
+    transition: 0.2s;
 }
 
-.history-item:hover .history-url {
-    color: var(--accent);
-    text-decoration: underline;
+.history-item:hover {
+    opacity: 1;
 }
 
 .history-thumb-wrapper {
-    width: 60px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     background: #111;
-    border: 1px solid #222;
-    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
 }
 
 .history-thumb-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(100%) contrast(1.2);
-}
-
-.history-item:hover .history-thumb-img {
-    filter: none;
 }
 
 .history-details {
@@ -328,37 +286,18 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .history-url {
-    font-size: 0.9rem;
-    color: var(--fg);
-    display: block;
+    font-size: 0.8rem;
+    color: #fff;
 }
 
 .history-date {
-    font-size: 0.7rem;
-    color: var(--dim);
-    display: block;
-}
-
-.history-arrow,
-.history-icon-placeholder {
     display: none;
 }
 
-/* --- Footer --- */
-footer {
-    width: 100%;
-    padding: 4rem 1rem;
-    text-align: center;
-    margin-top: auto;
-    border-top: 1px dashed var(--dim);
-}
-
-.footer-content,
-.footer-text {
-    font-size: 0.75rem;
-    color: var(--dim);
-    max-width: 400px;
-    margin: 0 auto;
+/* Too much info */
+.history-arrow,
+.history-icon-placeholder {
+    display: none;
 }
 
 /* --- Utils --- */
@@ -368,28 +307,25 @@ footer {
 
 .error-msg {
     margin: 1rem 0;
-    color: #ff0000;
-    font-family: var(--font-stack);
-    border-left: 3px solid #ff0000;
-    padding-left: 1rem;
+    color: var(--dim);
+    font-style: italic;
 }
 
 .processing-overlay {
-    margin-top: 3rem;
+    margin-top: 4rem;
     text-align: center;
 }
 
 .progress-bar {
     width: 100%;
-    border: 1px solid var(--dim);
-    height: 10px;
-    margin-top: 0.5rem;
-    padding: 2px;
+    height: 1px;
+    background: #333;
+    margin-top: 2rem;
 }
 
 .fill {
     height: 100%;
-    background: var(--fg);
+    background: #fff;
     width: 0%;
 }
 
@@ -397,7 +333,7 @@ footer {
     display: none;
 }
 
-@keyframes blinkIn {
+@keyframes fadeIn {
     from {
         opacity: 0;
     }

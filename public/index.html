@@ -88,15 +88,23 @@
                     <a id="downloadMp4Btn" class="btn secondary" href="#" target="_blank" style="flex: 1;">
                         Download Video
                     </a>
-                    <a id="downloadBtn" class="btn primary" href="#" download="converted.gif" style="flex: 1;">
+                    <a id="downloadBtn" class="btn secondary" href="#" download="converted.gif" style="flex: 1;">
                         Download GIF
                     </a>
                 </div>
 
-                <button id="resetBtn" class="btn action-btn"
-                    style="margin-top: 1rem; background: transparent; border: 1px solid #333; color: #888;">
+                <button id="resetBtn" class="btn btn-restart">
                     Convert Another
                 </button>
+            </div>
+        </div>
+        <div id="historySection" class="card panel-history hidden">
+            <div class="history-header">
+                <h2>Recent History</h2>
+                <button id="clearHistoryBtn" class="btn-text">Clear</button>
+            </div>
+            <div id="historyList" class="history-grid">
+                <!-- History items go here -->
             </div>
         </div>
     </main>
@@ -110,7 +118,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=3"></script>
+    <script src="script.js?v=4"></script>
 </body>
 
 </html>

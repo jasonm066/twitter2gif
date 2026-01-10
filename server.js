@@ -82,6 +82,11 @@ app.get('/api/proxy', async (req, res) => {
 });
 
 // 3. Convert Endpoint
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+
+// 3. Convert Endpoint
 app.post('/api/convert', async (req, res) => {
     const { videoUrl, start, duration } = req.body;
 
@@ -94,33 +99,43 @@ app.post('/api/convert', async (req, res) => {
 
     console.log(`Starting conversion: ${startTime}s for ${dur}s`);
 
-    // Set headers for file download
-    res.header('Content-Type', 'image/gif');
-    res.header('Content-Disposition', 'attachment; filename="twitter-convert.gif"');
+    // Create temp file path
+    const tempFile = path.join(os.tmpdir(), `gif_${Date.now()}_${Math.random().toString(36).substring(7)}.gif`);
 
-    // Stream the video from URL directly into FFMPEG
-    // FFMPEG can accept HTTP URLs as input
     ffmpeg(videoUrl)
         .setStartTime(startTime)
         .setDuration(dur)
         .fps(15) // Higher FPS than client-side
         .outputOptions([
-            '-vf', 'scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse' // Scale + High quality palette
+            '-vf', 'scale=480:-1' // Simplified filter to prevent SIGSEGV/Memory crash
         ])
         .format('gif')
+        .save(tempFile) // Save to disk first
         .on('start', (cmd) => {
             console.log('FFMPEG Started:', cmd);
         })
         .on('error', (err) => {
             console.error('FFMPEG Error:', err);
+            // Clean up if partially written
+            if (fs.existsSync(tempFile)) {
+                fs.unlink(tempFile, () => { });
+            }
             if (!res.headersSent) {
-                res.status(500).end();
+                res.status(500).json({ error: 'Conversion failed', details: err.message });
             }
         })
         .on('end', () => {
-            console.log('FFMPEG Finished');
-        })
-        .pipe(res, { end: true });
+            console.log('FFMPEG Finished. Sending file.');
+            res.download(tempFile, 'twitter-convert.gif', (err) => {
+                if (err) {
+                    console.error('Download Error:', err);
+                }
+                // Cleanup after download (success or error)
+                if (fs.existsSync(tempFile)) {
+                    fs.unlink(tempFile, () => { });
+                }
+            });
+        });
 });
 
 // 4. ZIP Download Endpoint

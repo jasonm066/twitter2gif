@@ -31,8 +31,88 @@ const CONFIG = {
 
 // State
 let state = {
-    videoUrl: null
+    videoUrl: null,
+    tweetUrl: null,
+    currentMedia: null // To store info for history
 };
+
+// History State
+let history = JSON.parse(localStorage.getItem('tw2gif_history') || '[]');
+
+// Init History on Load
+document.addEventListener('DOMContentLoaded', () => {
+    updateHistoryUI();
+});
+
+// History Functions
+function addToHistory(data) {
+    // Avoid duplicates (check URL)
+    if (history.some(h => h.url === elements.tweetUrl.value)) return;
+
+    const item = {
+        id: Date.now(),
+        url: elements.tweetUrl.value,
+        type: data.type,
+        timestamp: new Date().toLocaleDateString(),
+        thumbnail: data.type === 'image' ? data.variants[0].url : null // We can't easily get vid thumb without more work, so maybe generic icon or try to capture
+    };
+
+    history.unshift(item); // Add to top
+    if (history.length > 10) history.pop(); // Keep max 10
+
+    localStorage.setItem('tw2gif_history', JSON.stringify(history));
+    updateHistoryUI();
+}
+
+function updateHistoryUI() {
+    const list = document.getElementById('historyList');
+    const section = document.getElementById('historySection');
+    const clearBtn = document.getElementById('clearHistoryBtn');
+
+    if (history.length === 0) {
+        section.classList.add('hidden');
+        return;
+    }
+
+    section.classList.remove('hidden');
+    list.innerHTML = '';
+
+    history.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.onclick = () => loadHistoryItem(item.url);
+
+        let iconContent;
+        if (item.thumbnail) {
+            iconContent = `<img src="${item.thumbnail}" class="history-thumb-img" alt="Thumb">`;
+        } else {
+            // Fallback for old items or failed captures - simple geometric shape
+            iconContent = `<div class="history-thumb-placeholder"></div>`;
+        }
+        div.innerHTML = `
+            <div class="history-thumb-wrapper">
+                ${iconContent}
+            </div>
+            <div class="history-details">
+                <span class="history-url">${item.url.split('status/')[1]?.substring(0, 10) || 'Tweet'}...</span>
+            </div>
+        `;
+        list.appendChild(div);
+    });
+
+    clearBtn.onclick = () => {
+        history = [];
+        localStorage.removeItem('tw2gif_history');
+        updateHistoryUI();
+    };
+}
+
+function loadHistoryItem(url) {
+    elements.tweetUrl.value = url;
+    fetchVideo();
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 // Event Listeners
 elements.fetchBtn.addEventListener('click', fetchVideo);
@@ -92,6 +172,7 @@ async function fetchVideo() {
             elements.imageContainer.classList.remove('hidden');
             renderGallery(data.variants);
             setLoading(false);
+            addToHistory(data); // Add to history
             return;
         }
 
@@ -99,14 +180,15 @@ async function fetchVideo() {
         if (!videoUrl) throw new Error('No video found in this tweet.');
 
         state.videoUrl = videoUrl;
+        addToHistory(data); // Add to history
 
         // Use local proxy for playback to avoid CORS/Grey screen issues
-        const proxyUrl = `/api/proxy?url=${encodeURIComponent(videoUrl)}`;
+        const proxyUrl = `/ api / proxy ? url = ${encodeURIComponent(videoUrl)} `;
         elements.videoPlayer.src = proxyUrl;
 
         // Link Preview Download Btn
         if (elements.previewDownloadBtn) {
-            elements.previewDownloadBtn.href = `${proxyUrl}&download=true`;
+            elements.previewDownloadBtn.href = `${proxyUrl}& download=true`;
         }
 
         elements.videoPlayer.onloadedmetadata = () => {
@@ -161,7 +243,7 @@ async function generateGif() {
         elements.downloadBtn.href = url;
 
         // Link MP4 Download
-        elements.downloadMp4Btn.href = `/api/proxy?url=${encodeURIComponent(state.videoUrl)}&download=true`;
+        elements.downloadMp4Btn.href = `/ api / proxy ? url = ${encodeURIComponent(state.videoUrl)}& download=true`;
 
         elements.processingOverlay.classList.add('hidden');
         elements.resultContainer.classList.remove('hidden');
@@ -248,7 +330,7 @@ function renderGallery(images) {
     const counter = document.createElement('div');
     counter.className = 'gallery-counter';
     counter.id = 'galleryCounter';
-    counter.textContent = `1 / ${images.length}`;
+    counter.textContent = `1 / ${images.length} `;
 
     // Download Btn
     const dlBtn = document.createElement('a');
@@ -321,7 +403,7 @@ function moveSlide(dir) {
     const dlBtn = document.getElementById('galleryDownload');
 
     // Slide (assuming 100% width)
-    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    track.style.transform = `translateX(-${currentSlide * 100} %)`;
 
     // Update Info
     counter.textContent = `${currentSlide + 1} / ${galleryImages.length}`;

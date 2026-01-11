@@ -246,6 +246,7 @@ async function generateGif() {
 
     const start = parseFloat(elements.startTime.value);
     const duration = parseFloat(elements.duration.value);
+    const quality = document.getElementById('qualitySelect').value;
 
     try {
         const response = await fetch('/api/convert', {
@@ -254,7 +255,8 @@ async function generateGif() {
             body: JSON.stringify({
                 videoUrl: state.videoUrl,
                 start,
-                duration
+                duration,
+                quality
             })
         });
 

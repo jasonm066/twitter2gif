@@ -125,11 +125,33 @@ app.post('/api/convert', async (req, res) => {
 
         // 2. Convert Local File
         await new Promise((resolve, reject) => {
-            ffmpeg(inputTemp)
+            const command = ffmpeg(inputTemp)
                 .setStartTime(startTime)
-                .setDuration(dur)
-                .fps(15)
-                .outputOptions(['-vf', 'scale=480:-1'])
+                .setDuration(dur);
+
+            // Quality Presets
+            const quality = req.body.quality || 'balanced';
+
+            if (quality === 'high') {
+                // High Quality: Generate palette first
+                // [0:v] fps=15,scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse
+                command.complexFilter([
+                    'fps=15,scale=480:-1:flags=lanczos[x]',
+                    '[x]split[x1][x2]',
+                    '[x1]palettegen[p]',
+                    '[x2][p]paletteuse'
+                ]);
+            } else if (quality === 'retro') {
+                // Retro: Low FPS, smaller, dithered
+                command.fps(10)
+                    .complexFilter('scale=320:-1:flags=neighbor,split[s0][s1];[s0]palettegen=stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=5');
+            } else {
+                // Balanced (Default) - Fast
+                command.fps(15)
+                    .outputOptions(['-vf', 'scale=480:-1']);
+            }
+
+            command
                 .format('gif')
                 .save(outputTemp)
                 .on('start', (cmd) => console.log('FFMPEG Started:', cmd))

@@ -1,15 +1,14 @@
 :root {
     --bg: #000000;
-    --glass: rgba(255, 255, 255, 0.03);
-    --glass-hover: rgba(255, 255, 255, 0.08);
-    --border: rgba(255, 255, 255, 0.08);
-    --highlight: #ffffff;
-    --accent: #a3a3a3;
+    --surface: #0a0a0a;
+    --border: #333333;
+    --border-hover: #666666;
     --text: #ffffff;
-    --text-muted: #666;
-    --font-heading: 'Space Grotesk', -apple-system, sans-serif;
-    --font-body: 'Outfit', sans-serif;
-    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --text-muted: #888888;
+    --accent: #ffffff;
+
+    --font-heading: 'Space Grotesk', system-ui, sans-serif;
+    --font-body: 'Outfit', system-ui, sans-serif;
 }
 
 * {
@@ -19,7 +18,7 @@
 }
 
 body {
-    background: var(--bg);
+    background-color: var(--bg);
     color: var(--text);
     font-family: var(--font-body);
     min-height: 100vh;
@@ -27,230 +26,128 @@ body {
     flex-direction: column;
     align-items: center;
     overflow-x: hidden;
-    background: radial-gradient(circle at 50% -20%, #151515 0%, #000 60%);
 }
 
 .app-container {
     width: 100%;
-    max-width: 640px;
-    padding: 8rem 1.5rem 6rem;
+    max-width: 600px;
+    /* Tighter width for focus */
+    padding: 6rem 1.5rem 4rem;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4rem;
+    gap: 3rem;
 }
 
-/* Typography */
+/* --- Typography --- */
 h1 {
     font-family: var(--font-heading);
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     font-weight: 700;
-    letter-spacing: -0.05em;
     text-align: center;
-    background: linear-gradient(180deg, #fff 20%, #555 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text);
     margin-bottom: 0.5rem;
-    animation: fadeDown 1s var(--ease) forwards;
+    letter-spacing: -0.02em;
 }
 
 .tagline {
     text-align: center;
     color: var(--text-muted);
-    font-size: 0.8rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    animation: fadeDown 1s var(--ease) 0.1s forwards;
-    opacity: 0;
-}
-
-/* Panels */
-.card {
-    opacity: 0;
-    animation: fadeUp 1s var(--ease) 0.2s forwards;
+    font-size: 0.85rem;
+    text-transform: lowercase;
+    opacity: 0.8;
 }
 
 h2 {
     font-family: var(--font-heading);
     font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.05em;
     color: var(--text-muted);
     margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
 }
 
-/* Input Area */
+/* --- Layout --- */
+.card {
+    /* No background, no shadows. Just layout. */
+    width: 100%;
+}
+
+/* --- Input Area --- */
 .huge-input {
-    background: var(--glass);
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 0.6rem 0.6rem 0.6rem 1.5rem;
+    border-radius: 8px;
+    /* Tighter radius */
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
     display: flex;
     align-items: center;
     gap: 1rem;
-    transition: all 0.5s var(--ease);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    transition: border-color 0.2s;
 }
 
 .huge-input:focus-within {
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 20px 60px rgba(255, 255, 255, 0.05);
-    transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--text);
 }
 
 .huge-input input {
     flex: 1;
     background: transparent;
     border: none;
-    color: #fff;
-    font-family: var(--font-heading);
-    font-size: 1.2rem;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1rem;
     outline: none;
 }
 
 .huge-input input::placeholder {
     color: #444;
-    transition: 0.3s;
-}
-
-.huge-input input:focus::placeholder {
-    opacity: 0;
 }
 
 #fetchBtn {
+    background: var(--text);
+    color: var(--bg);
     border: none;
-    background: #fff;
-    color: #000;
     font-weight: 600;
-    padding: 0.9rem 1.5rem;
-    border-radius: 14px;
-    cursor: pointer;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
     font-family: var(--font-heading);
-    transition: 0.3s var(--ease);
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-transform: uppercase;
 }
 
 #fetchBtn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    opacity: 0.9;
 }
 
-/* History Section */
-.history-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-    gap: 1rem;
-}
-
-.history-item {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    cursor: pointer;
-    transition: all 0.3s var(--ease);
-    position: relative;
-    overflow: hidden;
-}
-
-.history-item:hover {
-    background: var(--glass-hover);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-}
-
-.history-thumb-wrapper {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
-    background: #000;
-    overflow: hidden;
-    flex-shrink: 0;
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.history-thumb-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.history-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.history-url {
-    font-family: var(--font-heading);
-    font-size: 0.95rem;
-    color: #fff;
-}
-
-.history-date {
-    font-size: 0.75rem;
-    color: #666;
-    margin-top: 0.25rem;
-}
-
-.history-arrow {
-    width: 30px;
-    height: 30px;
+/* Loader */
+.loader {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #000;
+    border-top-color: transparent;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transform: translateX(-10px);
-    transition: 0.3s var(--ease);
+    animation: spin 1s linear infinite;
+    display: inline-block;
 }
 
-.history-item:hover .history-arrow {
-    opacity: 1;
-    transform: translateX(0);
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.btn-text {
-    background: none;
-    border: none;
-    color: #666;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn-text:hover {
-    color: #fff;
-}
-
-/* Video Preview */
+/* --- Video Preview --- */
 .video-preview {
-    background: #000;
-    border-radius: 16px;
+    margin-top: 2rem;
+    background: var(--surface);
     border: 1px solid var(--border);
+    border-radius: 8px;
     overflow: hidden;
-    margin-top: 3rem;
-    animation: fadeUp 0.8s var(--ease) forwards;
 }
-
-.preview-header {
-    display: none;
-}
-
-/* Hide ugly preview text */
 
 video {
     width: 100%;
@@ -258,178 +155,205 @@ video {
 }
 
 .controls {
-    padding: 1.5rem;
-    background: rgba(10, 10, 10, 0.85);
-    backdrop-filter: blur(12px);
+    padding: 1rem;
     border-top: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
 }
 
-/* Range Slider */
+/* Sliders - Ultra minimal */
+.range-group {
+    margin-bottom: 1rem;
+}
+
 .range-group label {
     display: flex;
     justify-content: space-between;
     font-size: 0.7rem;
-    color: #888;
+    color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
 }
 
-input[type="range"] {
+input[type=range] {
     width: 100%;
-    height: 4px;
-    background: #222;
+    height: 2px;
+    background: var(--border);
     appearance: none;
-    border-radius: 2px;
 }
 
-input[type="range"]::-webkit-slider-thumb {
+input[type=range]::-webkit-slider-thumb {
     appearance: none;
-    width: 18px;
-    height: 18px;
-    background: #000;
-    border: 2px solid #fff;
+    width: 12px;
+    height: 12px;
+    background: var(--text);
     border-radius: 50%;
-    cursor: grab;
-    transition: 0.2s;
+    cursor: pointer;
 }
 
-input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-    background: #fff;
-}
-
-/* --- FIXED BUTTONS --- */
+/* --- Buttons --- */
 .btn {
     display: inline-flex;
     justify-content: center;
     align-items: center;
     font-family: var(--font-heading);
-    font-weight: 600;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    padding: 1rem;
+    border-radius: 6px;
     cursor: pointer;
-    transition: all 0.3s var(--ease);
-    border: none;
-    border-radius: 12px;
     text-decoration: none;
-    line-height: normal;
-    text-align: center;
+    transition: all 0.2s;
 }
 
-/* Primary Action (Generate GIF) */
+/* Action Button (Main) */
 .btn.action-btn {
     width: 100%;
-    padding: 1.2rem;
-    background: #fff;
-    color: #000;
-    box-shadow: 0 5px 20px rgba(255, 255, 255, 0.15);
+    background: var(--text);
+    color: var(--bg);
+    border: none;
 }
 
 .btn.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+    opacity: 0.9;
 }
 
-/* Result Buttons Container */
-.result-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-/* Secondary Button - Unified Glass Style */
+/* Secondary Actions */
 .btn.secondary {
-    flex: 1;
-    /* Ensure equal width in flex container */
-    background: rgba(255, 255, 255, 0.08);
-    /* Glass effect */
-    color: #ddd;
-    /* Visible text color */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
 }
 
 .btn.secondary:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    /* White on hover */
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
+    border-color: var(--text);
+    color: var(--text);
+    background: transparent;
 }
 
-/* Primary Result Button (Download GIF) - REMOVED, now using Secondary style for uniformity per request */
-/* If .btn.primary is used elsewhere it can stay, but download buttons are now .btn.secondary */
+/* Container Adjustments */
+.preview-actions,
+.result-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
 
-/* Restart / Convert Another Button */
+.preview-actions .btn,
+.result-actions .btn {
+    flex: 1;
+}
+
+/* Restart Button */
 .btn-restart {
     width: 100%;
-    margin-top: 1rem;
-    background: rgba(255, 255, 255, 0.08);
-    /* Unified Background */
-    color: #ddd;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    /* Unified Border */
-    padding: 1.2rem;
-    font-weight: 600;
+    margin-top: 0.75rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
 }
 
 .btn-restart:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
+    border-color: var(--text);
+    color: var(--text);
 }
 
-/* Results */
+/* --- Results --- */
 .result-area {
     margin-top: 3rem;
     text-align: center;
-    animation: fadeUp 0.8s var(--ease) forwards;
 }
 
 #gifResult {
     max-width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
     border: 1px solid var(--border);
 }
 
-/* Footer */
-footer {
+/* --- History --- */
+.history-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    /* List view is more minimal */
+    gap: 0.5rem;
+}
+
+.history-item {
+    background: transparent;
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-item:hover {
+    opacity: 0.7;
+}
+
+.history-thumb-wrapper {
+    width: 48px;
+    height: 48px;
+    background: var(--surface);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.history-thumb-img {
     width: 100%;
-    padding: 3rem;
-    text-align: center;
-    border-top: 1px solid var(--border);
-    margin-top: auto;
-    background: #020202;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%);
+    /* Minimalist touch */
 }
 
-.footer-text {
-    color: #555;
-    font-size: 0.75rem;
-    max-width: 400px;
-    margin: 0 auto;
-    line-height: 1.6;
+.history-details {
+    flex: 1;
 }
 
-.footer-text strong {
-    color: #888;
+.history-url {
+    font-size: 0.9rem;
+    color: var(--text);
 }
 
-/* Utils */
+.history-date {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+.history-arrow {
+    display: none;
+}
+
+/* Too noisy */
+.history-icon {
+    font-size: 1.2rem;
+    filter: grayscale(100);
+}
+
+/* --- Utils --- */
 .hidden {
     display: none !important;
 }
 
+.preview-header {
+    display: none;
+}
+
 .error-msg {
     margin-top: 1rem;
-    color: #ff5555;
+    color: #ff3333;
     text-align: center;
+    font-size: 0.9rem;
+    border: 1px solid #ff3333;
+    padding: 0.5rem;
 }
 
 .processing-overlay {
@@ -440,49 +364,22 @@ footer {
 .progress-bar {
     width: 100%;
     height: 2px;
-    background: #222;
-    margin-top: 1.5rem;
-    overflow: hidden;
+    background: var(--border);
+    margin-top: 1rem;
 }
 
 .fill {
-    width: 50%;
     height: 100%;
-    background: #fff;
-    animation: loading 1.2s infinite ease-in-out;
+    background: var(--text);
+    animation: indeterminate 1.5s infinite linear;
 }
 
-/* Animations */
-@keyframes fadeDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes loading {
+@keyframes indeterminate {
     0% {
         transform: translateX(-100%);
     }
 
     100% {
-        transform: translateX(300%);
+        transform: translateX(100%);
     }
 }

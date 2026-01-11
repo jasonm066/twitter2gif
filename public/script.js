@@ -7,6 +7,7 @@ const elements = {
     videoPlayer: document.getElementById('videoPlayer'),
     convertBtn: document.getElementById('convertBtn'),
     previewDownloadBtn: document.getElementById('previewDownloadBtn'),
+    previewAudioBtn: document.getElementById('previewAudioBtn'),
     startTime: document.getElementById('startTime'),
     startTimeVal: document.getElementById('startTimeVal'),
     duration: document.getElementById('duration'),
@@ -82,20 +83,15 @@ function updateHistoryUI() {
         div.className = 'history-item';
         div.onclick = () => loadHistoryItem(item.url);
 
-        let iconContent;
-        if (item.thumbnail) {
-            iconContent = `<img src="${item.thumbnail}" class="history-thumb-img" alt="Thumb">`;
-        } else {
-            // Fallback for old items or failed captures - simple geometric shape
-            iconContent = `<div class="history-thumb-placeholder"></div>`;
-        }
+        let icon = item.type === 'image' ? '🖼️' : '🎥';
+
         div.innerHTML = `
-            <div class="history-thumb-wrapper">
-                ${iconContent}
-            </div>
+            <div class="history-icon">${icon}</div>
             <div class="history-details">
                 <span class="history-url">${item.url.split('status/')[1]?.substring(0, 10) || 'Tweet'}...</span>
+                <span class="history-date">${item.timestamp}</span>
             </div>
+            <div class="history-arrow">→</div>
         `;
         list.appendChild(div);
     });
@@ -183,12 +179,15 @@ async function fetchVideo() {
         addToHistory(data); // Add to history
 
         // Use local proxy for playback to avoid CORS/Grey screen issues
-        const proxyUrl = `/ api / proxy ? url = ${encodeURIComponent(videoUrl)} `;
+        const proxyUrl = `/api/proxy?url=${encodeURIComponent(videoUrl)}`;
         elements.videoPlayer.src = proxyUrl;
 
         // Link Preview Download Btn
         if (elements.previewDownloadBtn) {
-            elements.previewDownloadBtn.href = `${proxyUrl}& download=true`;
+            elements.previewDownloadBtn.href = `${proxyUrl}&download=true`;
+        }
+        if (elements.previewAudioBtn) {
+            elements.previewAudioBtn.href = `/api/audio?url=${encodeURIComponent(videoUrl)}`;
         }
 
         elements.videoPlayer.onloadedmetadata = () => {
@@ -243,7 +242,7 @@ async function generateGif() {
         elements.downloadBtn.href = url;
 
         // Link MP4 Download
-        elements.downloadMp4Btn.href = `/ api / proxy ? url = ${encodeURIComponent(state.videoUrl)}& download=true`;
+        elements.downloadMp4Btn.href = `/api/proxy?url=${encodeURIComponent(state.videoUrl)}&download=true`;
 
         elements.processingOverlay.classList.add('hidden');
         elements.resultContainer.classList.remove('hidden');
@@ -330,7 +329,7 @@ function renderGallery(images) {
     const counter = document.createElement('div');
     counter.className = 'gallery-counter';
     counter.id = 'galleryCounter';
-    counter.textContent = `1 / ${images.length} `;
+    counter.textContent = `1 / ${images.length}`;
 
     // Download Btn
     const dlBtn = document.createElement('a');
@@ -403,7 +402,7 @@ function moveSlide(dir) {
     const dlBtn = document.getElementById('galleryDownload');
 
     // Slide (assuming 100% width)
-    track.style.transform = `translateX(-${currentSlide * 100} %)`;
+    track.style.transform = `translateX(-${currentSlide * 100}%)`;
 
     // Update Info
     counter.textContent = `${currentSlide + 1} / ${galleryImages.length}`;

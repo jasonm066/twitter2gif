@@ -14,7 +14,7 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;600&display=swap"
         rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=5">
     <!-- gif.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
 </head>
@@ -58,10 +58,12 @@
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <div class="preview-actions" style="display: flex; gap: 1rem; margin-top: 1.5rem;">
                     <!-- Added Preview Download Button just in case -->
                     <a id="previewDownloadBtn" class="btn secondary" href="#" target="_blank"
                         style="flex:1; text-decoration:none;">Download Video</a>
+                    <a id="previewAudioBtn" class="btn secondary" href="#" target="_blank"
+                        style="flex:1; text-decoration:none;">Download Audio</a>
                     <button id="convertBtn" class="btn action-btn" style="margin-top:0; flex:1;">
                         Generate GIF
                     </button>
@@ -109,14 +111,7 @@
         </div>
     </main>
 
-    <footer>
-        <div class="footer-content">
-            <p><strong>Twitter2Gif</strong> is a minimalist, privacy-focused tool designed to preserve ephemeral digital
-                media.</p>
-            <p>Archive videos, capture GIFs, and extract high-quality images from Tweets without watermarks or tracking.
-            </p>
-        </div>
-    </footer>
+
 
     <script src="script.js?v=4"></script>
 </body>

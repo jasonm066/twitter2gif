@@ -211,6 +211,61 @@ app.post('/api/zip', async (req, res) => {
     archive.finalize();
 });
 
+// 5. Audio Extraction Endpoint
+app.get('/api/audio', async (req, res) => {
+    const { url } = req.query;
+    if (!url) return res.status(400).send('URL required');
+
+    const id = Date.now() + '_' + Math.random().toString(36).substring(7);
+    const id2 = id + '_audio'; // Avoid collision
+    const inputTemp = path.join(os.tmpdir(), `input_${id}.mp4`);
+    // Note: If using ffmpeg to convert to mp3, we'll save as mp3
+    const outputTemp = path.join(os.tmpdir(), `output_${id2}.mp3`);
+
+    console.log(`Extracting Audio for: ${url}`);
+
+    try {
+        // 1. Download Video
+        const writer = fs.createWriteStream(inputTemp);
+        const response = await axios({
+            url: url,
+            method: 'GET',
+            responseType: 'stream'
+        });
+        response.data.pipe(writer);
+
+        await new Promise((resolve, reject) => {
+            writer.on('finish', resolve);
+            writer.on('error', reject);
+        });
+
+        // 2. Extract Audio
+        await new Promise((resolve, reject) => {
+            ffmpeg(inputTemp)
+                .outputOptions('-vn') // No video
+                .audioCodec('libmp3lame') // Convert to MP3
+                .format('mp3')
+                .save(outputTemp)
+                .on('error', reject)
+                .on('end', resolve);
+        });
+
+        // 3. Send
+        res.download(outputTemp, 'twitter-audio.mp3', (err) => {
+            if (err) console.error('Audio Download Error:', err);
+            // Cleanup
+            if (fs.existsSync(inputTemp)) fs.unlink(inputTemp, () => { });
+            if (fs.existsSync(outputTemp)) fs.unlink(outputTemp, () => { });
+        });
+
+    } catch (error) {
+        console.error('Audio Extraction Failed:', error);
+        if (fs.existsSync(inputTemp)) fs.unlink(inputTemp, () => { });
+        if (fs.existsSync(outputTemp)) fs.unlink(outputTemp, () => { });
+        res.status(500).send('Audio extraction failed');
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });

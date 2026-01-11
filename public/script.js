@@ -40,10 +40,35 @@ let state = {
 // History State
 let history = JSON.parse(localStorage.getItem('tw2gif_history') || '[]');
 
-// Init History on Load
+// Init History on Load & Clipboard Check
 document.addEventListener('DOMContentLoaded', () => {
     updateHistoryUI();
+    checkClipboard();
 });
+
+// Check clipboard on window focus
+window.addEventListener('focus', checkClipboard);
+
+async function checkClipboard() {
+    try {
+        // Only if input is empty
+        if (elements.tweetUrl.value.trim() !== '') return;
+
+        const text = await navigator.clipboard.readText();
+
+        // Basic Twitter/X URL check
+        const twitterRegex = /https?:\/\/(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]+\/status\/[0-9]+/;
+
+        if (twitterRegex.test(text)) {
+            elements.tweetUrl.value = text;
+            // Optional: Visually indicate paste happened?
+            // For now, minimal.
+        }
+    } catch (err) {
+        // Clipboard access denied or empty
+        // Silently fail - this is expected behavior in many browsers without user interaction
+    }
+}
 
 // History Functions
 function addToHistory(data) {
